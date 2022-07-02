@@ -17,6 +17,19 @@ function Get-TargetResource
         $Principal
     )
 
+    if(-not (Test-Path -Path $Path))
+    {
+        Write-Warning "Path $Path does not exist"
+        $ReturnValue = @{
+            Ensure = 'Absent'
+            Path = $Path
+            ItemType = $null
+            Principal = $null
+            AccessControlInformation = $null
+        }
+        return $ReturnValue
+    }
+
     $Acl = Get-Acl -Path $Path -ErrorAction Stop
 
     if ($Acl -is [System.Security.AccessControl.DirectorySecurity])
@@ -123,6 +136,12 @@ function Test-TargetResource
     }
 
     $InDesiredState = $true
+
+    if(-not (Test-Path -Path $Path))
+    {
+        Write-Warning "Path $Path does not exist"
+        return $false
+    }
 
     $Acl = Get-Acl -Path $Path -ErrorAction Stop
 

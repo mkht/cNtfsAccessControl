@@ -29,6 +29,17 @@ function Get-TargetResource
         Write-Verbose
     }
 
+    if(-not (Test-Path -Path $Path))
+    {
+        Write-Warning "Path $Path does not exist"
+        $ReturnValue = @{
+            Path = $Path
+            Enabled = $false
+            PreserveInherited = $false
+        }
+        return $ReturnValue
+    }
+
     $Acl = Get-Acl -Path $Path -ErrorAction Stop
 
     $EnabledResult = $Acl.AreAccessRulesProtected -eq $false
